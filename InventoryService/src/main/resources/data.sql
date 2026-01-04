@@ -1,0 +1,10 @@
+INSERT INTO products (id, title, price, stock) VALUES (1, 'Laptop', 1200.00, 50);
+INSERT INTO products (id, title, price, stock) VALUES (2, 'Smartphone', 800.00, 100);
+INSERT INTO products (id, title, price, stock) VALUES (3, 'Headphones', 150.00, 200);
+INSERT INTO products (id, title, price, stock) VALUES (4, 'Monitor', 300.00, 75);
+INSERT INTO products (id, title, price, stock) VALUES (5, 'Keyboard', 50.00, 150);
+INSERT INTO products (id, title, price, stock) VALUES (6, 'Mouse', 30.00, 180);
+INSERT INTO products (id, title, price, stock) VALUES (7, 'Tablet', 400.00, 60);
+INSERT INTO products (id, title, price, stock) VALUES (8, 'Smartwatch', 250.00, 90);
+INSERT INTO products (id, title, price, stock) VALUES (9, 'Printer', 200.00, 40);
+INSERT INTO products (id, title, price, stock) VALUES (10, 'Camera', 900.00, 30);
