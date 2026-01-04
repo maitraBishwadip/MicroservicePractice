@@ -33,4 +33,9 @@ public class OrderController {
         OrderRequestDto order = orderService.getOrderById(id);
         return ResponseEntity.ok(order);
     }
+
+    @GetMapping("/helloOrders")
+    public String helloOrders() {
+        return "Hello form Order Service";
+    }
 }

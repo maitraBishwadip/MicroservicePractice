@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 
 
 import org.modelmapper.ModelMapper;
+import org.springframework.web.client.RestClient;
 
 @Configuration
 public class AppConfig {
@@ -13,6 +14,8 @@ public class AppConfig {
     public ModelMapper modelmapper() {
         return new ModelMapper();
     }
+
+
 
 }
 
