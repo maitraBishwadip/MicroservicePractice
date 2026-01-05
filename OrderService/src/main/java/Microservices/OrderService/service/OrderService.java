@@ -1,8 +1,10 @@
 // OrderService/src/main/java/Microservices/OrderService/service/OrderService.java
 package Microservices.OrderService.service;
 
+import Microservices.OrderService.clients.InventoryOpenFeignClient;
 import Microservices.OrderService.dto.OrderRequestDto;
 import Microservices.OrderService.entity.OrderItem;
+import Microservices.OrderService.entity.OrderStatus;
 import Microservices.OrderService.entity.Orders;
 import Microservices.OrderService.repository.OrdersRepository;
 import jakarta.transaction.Transactional;
@@ -21,16 +23,23 @@ import java.util.stream.Collectors;
 public class OrderService {
     private final OrdersRepository ordersRepository;
     private final ModelMapper modelMapper;
+    private final InventoryOpenFeignClient FeignClient;
+
 
     @Transactional
     public OrderRequestDto createOrder(OrderRequestDto orderRequestDto) {
-        Orders order = mapToOrderEntity(orderRequestDto);
+        Double totalPrice = FeignClient.totalCartPrice(orderRequestDto);
 
-        // Establish the bidirectional link
-        order.getItems().forEach(item -> item.setOrder(order));
+       Orders orders = modelMapper.map(orderRequestDto, Orders.class);
+       for(OrderItem orderItem: orders.getItems()){
+           orderItem.setOrder(orders);
 
-        Orders savedOrder = ordersRepository.save(order);
-        return mapToOrderRequestDto(savedOrder);
+       }
+       orders.setPrice(totalPrice);
+       orders.setOrderStatus(OrderStatus.ORDER_ADDED);
+       Orders placedOrder =  ordersRepository.save(orders);
+       return modelMapper.map(placedOrder, OrderRequestDto.class);
+
     }
 
     private Orders mapToOrderEntity(OrderRequestDto orderRequestDto) {

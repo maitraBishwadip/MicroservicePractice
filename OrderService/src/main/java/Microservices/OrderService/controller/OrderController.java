@@ -16,11 +16,11 @@ public class OrderController {
 
     private final OrderService orderService;
 
-    @PostMapping
-    public ResponseEntity<OrderRequestDto> createOrder(@RequestBody OrderRequestDto orderRequestDto) {
-        OrderRequestDto createdOrder = orderService.createOrder(orderRequestDto);
-        return new ResponseEntity<>(createdOrder, HttpStatus.CREATED);
-    }
+//    @PostMapping()
+//    public ResponseEntity<OrderRequestDto> createOrder(@RequestBody OrderRequestDto orderRequestDto) {
+//        OrderRequestDto createdOrder = orderService.createOrder(orderRequestDto);
+//        return new ResponseEntity<>(createdOrder, HttpStatus.CREATED);
+//    }
 
     @GetMapping
     public ResponseEntity<List<OrderRequestDto>> getAllOrders() {
@@ -36,6 +36,16 @@ public class OrderController {
 
     @GetMapping("/helloOrders")
     public String helloOrders() {
-        return "Hello form Order Service";
+        return "Hello form Order Service using microservice api client and feign client";
+    }
+
+    @PostMapping("/create-order")
+    public ResponseEntity<OrderRequestDto> createOrder(@RequestBody OrderRequestDto orderRequestDto){
+      OrderRequestDto orderDetails =  orderService.createOrder(orderRequestDto);
+
+      return ResponseEntity.ok(orderDetails);
+
+
+
     }
 }

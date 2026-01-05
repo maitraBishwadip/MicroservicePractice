@@ -1,8 +1,11 @@
 package Microservices.InventoryService.service;
 
+import Microservices.InventoryService.dto.OrderRequestDto;
+import Microservices.InventoryService.dto.OrderRequestItemDto;
 import Microservices.InventoryService.dto.ProductDto;
 import Microservices.InventoryService.entity.ProductEntity;
 import Microservices.InventoryService.repository.ProductRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -38,4 +41,28 @@ public class ProductService {
         return modelMapper.map(productEntity, ProductDto.class);
     }
 
+    @Transactional
+    public Double reduceStocks(OrderRequestDto orderRequestDto) {
+
+        Double totalPrice= 0.0;
+
+        for(OrderRequestItemDto item: orderRequestDto.getItems())
+        {
+            Long productId = item.getProductId();
+            Integer quantity = item.getQuantity();
+
+            ProductEntity product = productRepository.findById(productId).orElseThrow(()->
+                    new RuntimeException("Product not found"));
+            if(product.getStock() < quantity){
+                throw new RuntimeException("Insufficient stock for product:");
+            }
+
+            product.setStock(product.getStock() - quantity);
+            productRepository.save(product);
+            totalPrice += product.getPrice() * quantity;
+
+        }
+        return totalPrice;
+
+    }
 }

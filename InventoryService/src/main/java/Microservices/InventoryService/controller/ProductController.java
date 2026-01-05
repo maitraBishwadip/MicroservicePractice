@@ -1,15 +1,15 @@
 package Microservices.InventoryService.controller;
 
+import Microservices.InventoryService.clients.OrdersClient;
+import Microservices.InventoryService.dto.OrderRequestDto;
+import Microservices.InventoryService.dto.OrderRequestItemDto;
 import Microservices.InventoryService.dto.ProductDto;
 import Microservices.InventoryService.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestClient;
 
 import java.util.List;
@@ -22,6 +22,7 @@ public class ProductController {
     private final ProductService productService;
     private final DiscoveryClient discoveryClient;
     private final RestClient restClient;
+    private final OrdersClient ordersClient;
 
 
     @GetMapping
@@ -40,15 +41,24 @@ public class ProductController {
 
         public String fetchFromOrdersService()
         {
-            ServiceInstance orderService = discoveryClient.getInstances("OrderService").getLast();
+//            ServiceInstance orderService = discoveryClient.getInstances("OrderService").getLast();
+//
+//          return   restClient.get()
+//                    .uri(orderService.getUri()+"/api/v1/orders/helloOrders")
+//                    .retrieve()
+//                    .body(String.class);
 
-          return   restClient.get()
-                    .uri(orderService.getUri()+"/api/v1/orders/helloOrders")
-                    .retrieve()
-                    .body(String.class);
+            return ordersClient.helloOrders();
 
 
 
         }
+        @PutMapping("reduce-stock")
+       public ResponseEntity<Double> reduceStock(@RequestBody OrderRequestDto orderRequestDto)
+        {
+            Double totalPrice = productService.reduceStocks(orderRequestDto);
+            return ResponseEntity.ok(totalPrice);
+        }
+
 
 }
