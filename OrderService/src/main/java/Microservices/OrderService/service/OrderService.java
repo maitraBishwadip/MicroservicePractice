@@ -7,11 +7,16 @@ import Microservices.OrderService.entity.OrderItem;
 import Microservices.OrderService.entity.OrderStatus;
 import Microservices.OrderService.entity.Orders;
 import Microservices.OrderService.repository.OrdersRepository;
+import io.github.resilience4j.retry.annotation.Retry;
+
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+
+
 
 import java.util.List;
 import java.util.Optional;
@@ -27,6 +32,8 @@ public class OrderService {
 
 
     @Transactional
+    @Retry(name= "createOrder", fallbackMethod = "createOrderFallback")
+    @RateLimiter(name= "createOrder", fallbackMethod = "createOrderFallback")
     public OrderRequestDto createOrder(OrderRequestDto orderRequestDto) {
         Double totalPrice = FeignClient.totalCartPrice(orderRequestDto);
 
@@ -39,6 +46,13 @@ public class OrderService {
        orders.setOrderStatus(OrderStatus.ORDER_ADDED);
        Orders placedOrder =  ordersRepository.save(orders);
        return modelMapper.map(placedOrder, OrderRequestDto.class);
+
+    }
+
+    public OrderRequestDto createOrderFallback(OrderRequestDto orderRequestDto, Throwable throwable)
+    {
+        log.error("Fallback Occurred Due to : {}",throwable.getMessage());
+        return new OrderRequestDto();
 
     }
 

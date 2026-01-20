@@ -1,0 +1,14 @@
+resilience4j:
+  retry:
+    instances:
+      createOrder:
+        maxRetryAttempts: 3
+        waitDuration: 500ms
+
+
+  ratelimiter:
+    instances:
+     createOrder:
+       limitForPeriod: 1
+       limitRefreshPeriod: 5s
+       timeoutDuration: 1s
