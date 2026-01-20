@@ -7,6 +7,7 @@ import Microservices.OrderService.entity.OrderItem;
 import Microservices.OrderService.entity.OrderStatus;
 import Microservices.OrderService.entity.Orders;
 import Microservices.OrderService.repository.OrdersRepository;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
 
 import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
@@ -32,7 +33,8 @@ public class OrderService {
 
 
     @Transactional
-    @Retry(name= "createOrder", fallbackMethod = "createOrderFallback")
+   // @Retry(name= "createOrder", fallbackMethod = "createOrderFallback")
+    @CircuitBreaker(name= "createOrder", fallbackMethod = "createOrderFallback")
     @RateLimiter(name= "createOrder", fallbackMethod = "createOrderFallback")
     public OrderRequestDto createOrder(OrderRequestDto orderRequestDto) {
         Double totalPrice = FeignClient.totalCartPrice(orderRequestDto);
