@@ -1,3 +1,5 @@
+##TODO : ADD ACTUATOR AND CIRCUIT BREAKER HERE
+
 resilience4j:
   retry:
     instances:

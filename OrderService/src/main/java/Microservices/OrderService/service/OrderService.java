@@ -33,8 +33,8 @@ public class OrderService {
 
 
     @Transactional
-   // @Retry(name= "createOrder", fallbackMethod = "createOrderFallback")
-    @CircuitBreaker(name= "createOrder", fallbackMethod = "createOrderFallback")
+   @Retry(name= "createOrder", fallbackMethod = "createOrderFallback")
+   // @CircuitBreaker(name= "createOrder", fallbackMethod = "createOrderFallback")
     @RateLimiter(name= "createOrder", fallbackMethod = "createOrderFallback")
     public OrderRequestDto createOrder(OrderRequestDto orderRequestDto) {
         Double totalPrice = FeignClient.totalCartPrice(orderRequestDto);
